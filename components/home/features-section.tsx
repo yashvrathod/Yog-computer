@@ -9,21 +9,21 @@ import { cn } from "@/lib/utils";
 const features = [
   {
     number: "1",
-    title: "Premium Products",
+    title: "Computer Solutions",
     description:
-      "A refined selection of world-class products, engineered to bring unmatched quality and performance.",
+      "Sales, repairs, and maintenance of laptops, desktops, and accessories. Expert hardware troubleshooting and upgrades.",
   },
   {
     number: "2",
-    title: "Expert Services",
+    title: "Security Systems",
     description:
-      "Handled by certified professionals delivering industry-standard precision and excellence.",
+      "Professional CCTV camera installation, configuration, and monitoring for homes, offices, and businesses.",
   },
   {
     number: "3",
-    title: "Innovation First",
+    title: "Electrical Services",
     description:
-      "Future-ready solutions powered by cutting-edge technology and modern engineering.",
+      "Complete electrical solutions including wiring, installations, repairs, and safety inspections for all properties.",
   },
 ];
 
@@ -43,7 +43,7 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl font-semibold tracking-tight"
         >
-          What Makes Us Different
+          Our Core Services
         </motion.h2>
 
         <motion.p
@@ -52,8 +52,7 @@ export function FeaturesSection() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-muted-foreground max-w-2xl mx-auto mt-4"
         >
-          A blend of expertise, quality, and innovation — tailored to elevate
-          your experience.
+          Comprehensive technology solutions for all your computing, security, and electrical needs in Pune.
         </motion.p>
       </div>
 

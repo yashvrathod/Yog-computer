@@ -19,13 +19,13 @@ export function AboutPreview() {
             transition={{ duration: 0.7 }}
           >
             <p className="text-sm font-medium text-muted-foreground italic mb-3">
-              The gist of it
+              About Yog Computers
             </p>
 
             <h2 className="text-4xl font-bold tracking-tight text-foreground mb-6 leading-snug">
-              Crafting digital experiences
+              Your trusted technology partner
               <br />
-              that connect, inspire, and deliver results.
+              in Pune since 2003.
             </h2>
           </motion.div>
 
@@ -36,11 +36,9 @@ export function AboutPreview() {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             <p className="text-lg text-muted-foreground leading-relaxed">
-              We help forward-thinking companies at the forefront of innovation
-              sharpen their story, elevate their market presence, and win in
-              their industry. From product development to digital strategy, we
-              blend creative vision with technical execution to drive meaningful
-              outcomes— whether that&apos;s adoption, trust, or growth.
+              At Yog Computers, we specialize in computer sales, repairs, security camera installations, and electrical services. 
+              Our expert team ensures your devices run smoothly with personalized service tailored to your computing needs. 
+              Trust us for fast, reliable, and long-term tech solutions that keep you focused on what truly matters.
             </p>
           </motion.div>
         </div>

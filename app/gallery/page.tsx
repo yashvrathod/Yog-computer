@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import type { Media } from "@/lib/types"
-import { cn } from "@/lib/utils"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import type { Media } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const categories = [
   { id: "all", name: "All" },
@@ -18,7 +18,7 @@ const categories = [
   { id: "products", name: "Products" },
   { id: "services", name: "Services" },
   { id: "office", name: "Office" },
-]
+];
 
 const galleryData: GalleryImage[] = [
   {
@@ -117,71 +117,73 @@ const galleryData: GalleryImage[] = [
     category: "office",
     createdAt: new Date(),
   },
-]
+];
 
 export default function GalleryPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedImage, setSelectedImage] = useState<Media | null>(null)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [images, setImages] = useState<Media[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedImage, setSelectedImage] = useState<Media | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [images, setImages] = useState<Media[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadImages()
-  }, [selectedCategory])
+    loadImages();
+  }, [selectedCategory]);
 
   async function loadImages() {
     try {
-      setLoading(true)
-      const params = new URLSearchParams()
+      setLoading(true);
+      const params = new URLSearchParams();
       if (selectedCategory && selectedCategory !== "all") {
-        params.append("category", selectedCategory)
+        params.append("category", selectedCategory);
       }
-      
-      const response = await fetch(`/api/gallery?${params}`)
-      const result = await response.json()
-      
+
+      const response = await fetch(`/api/gallery?${params}`);
+      const result = await response.json();
+
       if (response.ok) {
-        setImages(result.data || [])
-        setError(null)
+        setImages(result.data || []);
+        setError(null);
       } else {
-        setError(result.error || 'Failed to load gallery')
-        setImages([])
+        setError(result.error || "Failed to load gallery");
+        setImages([]);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load gallery')
-      setImages([])
+      setError(err instanceof Error ? err.message : "Failed to load gallery");
+      setImages([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  const filteredImages = images
+  const filteredImages = images;
 
-  const currentIndex = selectedImage ? filteredImages.findIndex((img) => img.id === selectedImage.id) : -1
+  const currentIndex = selectedImage
+    ? filteredImages.findIndex((img) => img.id === selectedImage.id)
+    : -1;
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
-      setSelectedImage(filteredImages[currentIndex - 1])
+      setSelectedImage(filteredImages[currentIndex - 1]);
     }
-  }
+  };
 
   const handleNext = () => {
     if (currentIndex < filteredImages.length - 1) {
-      setSelectedImage(filteredImages[currentIndex + 1])
+      setSelectedImage(filteredImages[currentIndex + 1]);
     }
-  }
+  };
 
   const openLightbox = (image: GalleryImage) => {
-    setSelectedImage(image)
-    setLightboxOpen(true)
-  }
+    setSelectedImage(image);
+    setLightboxOpen(true);
+  };
 
   return (
     <>
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-42 pb-16">
         {/* Hero */}
         <section className="px-4 sm:px-6 lg:px-8 mb-12">
           <div className="mx-auto max-w-7xl">
@@ -195,7 +197,8 @@ export default function GalleryPage() {
                 Our <span className="font-serif italic">Gallery</span>
               </h1>
               <p className="text-lg text-muted-foreground">
-                Explore moments from our events, products, services, and workspace that define who we are.
+                Explore moments from our events, products, services, and
+                workspace that define who we are.
               </p>
             </motion.div>
           </div>
@@ -212,7 +215,8 @@ export default function GalleryPage() {
                   size="sm"
                   className={cn(
                     "rounded-full",
-                    selectedCategory === category.id && "bg-foreground text-background hover:bg-foreground/90",
+                    selectedCategory === category.id &&
+                      "bg-foreground text-background hover:bg-foreground/90"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
                 >
@@ -226,7 +230,10 @@ export default function GalleryPage() {
         {/* Masonry Grid */}
         <section className="px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+            <motion.div
+              layout
+              className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+            >
               <AnimatePresence mode="popLayout">
                 {loading ? (
                   Array.from({ length: 8 }).map((_, index) => (
@@ -250,35 +257,41 @@ export default function GalleryPage() {
                   </div>
                 ) : (
                   filteredImages.map((image, index) => (
-                  <motion.div
-                    key={image.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="break-inside-avoid"
-                  >
-                    <div
-                      className="relative group cursor-pointer overflow-hidden rounded-xl"
-                      onClick={() => openLightbox(image)}
+                    <motion.div
+                      key={image.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="break-inside-avoid"
                     >
-                      <Image
-                        src={image.url || "/placeholder.svg"}
-                        alt={image.alt || image.filename}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-300" />
-                      <div className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div>
-                          <h3 className="text-background font-semibold text-lg">{image.caption || image.filename}</h3>
-                          {image.description && <p className="text-background/80 text-sm">{image.description}</p>}
+                      <div
+                        className="relative group cursor-pointer overflow-hidden rounded-xl"
+                        onClick={() => openLightbox(image)}
+                      >
+                        <Image
+                          src={image.url || "/placeholder.svg"}
+                          alt={image.alt || image.filename}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-300" />
+                        <div className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div>
+                            <h3 className="text-background font-semibold text-lg">
+                              {image.caption || image.filename}
+                            </h3>
+                            {image.description && (
+                              <p className="text-background/80 text-sm">
+                                {image.description}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
                   ))
                 )}
               </AnimatePresence>
@@ -333,9 +346,13 @@ export default function GalleryPage() {
                   sizes="(max-width: 768px) 100vw, 800px"
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-foreground/80 to-transparent rounded-b-xl">
-                  <h3 className="text-background font-semibold text-xl">{selectedImage.title}</h3>
+                  <h3 className="text-background font-semibold text-xl">
+                    {selectedImage.title}
+                  </h3>
                   {selectedImage.description && (
-                    <p className="text-background/80 text-sm mt-1">{selectedImage.description}</p>
+                    <p className="text-background/80 text-sm mt-1">
+                      {selectedImage.description}
+                    </p>
                   )}
                 </div>
               </div>
@@ -346,5 +363,5 @@ export default function GalleryPage() {
 
       <Footer />
     </>
-  )
+  );
 }

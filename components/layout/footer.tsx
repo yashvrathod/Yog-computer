@@ -29,9 +29,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold tracking-tight">COMPANY</h3>
+            <h3 className="text-2xl font-bold tracking-tight">Yog Computers</h3>
             <p className="text-background/70 text-sm leading-relaxed">
-              Leading provider of innovative products and services since 2003. Trusted by industry leaders worldwide.
+              Discover personalized service tailored to your computing needs. Our expert team ensures your devices run smoothly—so you can stay focused on what truly matters. Trust Yog Computers for fast, reliable, and long-term tech solutions.
             </p>
             <div className="flex items-center gap-4 pt-4">
               {footerLinks.social.map((item) => (
@@ -81,18 +81,22 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-background/70 text-sm">
                 <Mail className="h-4 w-4" />
-                <span>contact@company.com</span>
+                <span>info@yogcomputers.com</span>
               </li>
               <li className="flex items-center gap-3 text-background/70 text-sm">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91-9850850331</span>
               </li>
               <li className="flex items-start gap-3 text-background/70 text-sm">
                 <MapPin className="h-4 w-4 mt-0.5" />
                 <span>
-                  123 Business Street
+                  575, 34/1, Bharti Vidyapeeth Campus
                   <br />
-                  New York, NY 10001
+                  Shivshankar Complex, Near R K Hostel
+                  <br />
+                  Tanaje Nagar, Mohan Nagar, Dhankawadi
+                  <br />
+                  Pune, Maharashtra 411043
                 </span>
               </li>
             </ul>
@@ -102,7 +106,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-background/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-background/60 text-sm">
-              © {new Date().getFullYear()} Company Name. All rights reserved.
+              © {new Date().getFullYear()} Yog Computers. All rights reserved.
             </p>
             <p className="text-background/60 text-sm">Established January 2003</p>
           </div>

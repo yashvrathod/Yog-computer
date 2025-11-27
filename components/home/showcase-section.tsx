@@ -20,9 +20,9 @@ export function ShowcaseSection() {
           transition={{ duration: 0.6 }}
           className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-16 text-balance"
         >
-          Blending innovation, quality
+          Quality products and 
           <br />
-          and excellence
+          reliable services
         </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -80,8 +80,7 @@ export function ShowcaseSection() {
           className="text-center mt-12"
         >
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-            We are committed to delivering sustainable solutions that drive business growth while maintaining the
-            highest standards of quality.
+            We are committed to providing personalized technology solutions with transparent communication and reliable support for all your computing needs.
           </p>
           <Button asChild variant="outline" className="rounded-full bg-transparent">
             <Link href="/about">Our commitment</Link>

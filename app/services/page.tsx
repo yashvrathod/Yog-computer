@@ -1,73 +1,80 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { ServiceCard } from "@/components/services/service-card"
-import { ServiceInquiryModal } from "@/components/services/service-inquiry-modal"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { getServices, getCategories } from "@/lib/data"
-import type { Service, Category } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { ServiceCard } from "@/components/services/service-card";
+import { ServiceInquiryModal } from "@/components/services/service-inquiry-modal";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { getServices, getCategories } from "@/lib/data";
+import type { Service, Category } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export default function ServicesPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [showServiceModal, setShowServiceModal] = useState(false)
-  const [services, setServices] = useState<Service[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
         const [servicesData, categoriesData] = await Promise.all([
           getServices(),
-          getCategories()
-        ])
-        setServices(servicesData)
-        setCategories(categoriesData)
+          getCategories(),
+        ]);
+        setServices(servicesData);
+        setCategories(categoriesData);
       } catch (error) {
-        console.error('Failed to load services:', error)
+        console.error("Failed to load services:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const filteredServices = useMemo(() => {
     return services.filter((service) => {
-      if (!service.isActive) return false
-      return !selectedCategory || (service.category?.slug === selectedCategory)
-    })
-  }, [services, selectedCategory])
+      if (!service.isActive) return false;
+      return !selectedCategory || service.category?.slug === selectedCategory;
+    });
+  }, [services, selectedCategory]);
 
   const handleInquire = (service: Service) => {
-    setSelectedService(service)
-    setIsModalOpen(true)
-  }
+    setSelectedService(service);
+    setIsModalOpen(true);
+  };
 
   const handleViewDetails = (service: Service) => {
-    setSelectedService(service)
-    setShowServiceModal(true)
-  }
+    setSelectedService(service);
+    setShowServiceModal(true);
+  };
 
   const handleScheduleConsultation = () => {
     // Navigate to contact page for consultation booking
-    const contactUrl = `/contact?type=consultation&subject=${encodeURIComponent('Schedule a Consultation')}`
-    window.location.href = contactUrl
-  }
+    const contactUrl = `/contact?type=consultation&subject=${encodeURIComponent(
+      "Schedule a Consultation"
+    )}`;
+    window.location.href = contactUrl;
+  };
 
   return (
     <>
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-42 pb-16">
         {/* Hero */}
         <section className="px-4 sm:px-6 lg:px-8 mb-16">
           <div className="mx-auto max-w-7xl">
@@ -81,8 +88,9 @@ export default function ServicesPage() {
                 Our <span className="font-serif italic">Services</span>
               </h1>
               <p className="text-lg text-muted-foreground">
-                Expert solutions tailored to your unique business challenges. From strategy to execution, we&apos;re
-                with you every step of the way.
+                Expert solutions tailored to your unique business challenges.
+                From strategy to execution, we&apos;re with you every step of
+                the way.
               </p>
             </motion.div>
           </div>
@@ -97,7 +105,8 @@ export default function ServicesPage() {
                 size="sm"
                 className={cn(
                   "rounded-full",
-                  !selectedCategory && "bg-foreground text-background hover:bg-foreground/90",
+                  !selectedCategory &&
+                    "bg-foreground text-background hover:bg-foreground/90"
                 )}
                 onClick={() => setSelectedCategory(null)}
               >
@@ -110,7 +119,8 @@ export default function ServicesPage() {
                   size="sm"
                   className={cn(
                     "rounded-full",
-                    selectedCategory === category.slug && "bg-foreground text-background hover:bg-foreground/90",
+                    selectedCategory === category.slug &&
+                      "bg-foreground text-background hover:bg-foreground/90"
                   )}
                   onClick={() => setSelectedCategory(category.slug)}
                 >
@@ -142,8 +152,8 @@ export default function ServicesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <ServiceCard 
-                      service={service} 
+                    <ServiceCard
+                      service={service}
                       onInquire={handleInquire}
                       onViewDetails={handleViewDetails}
                     />
@@ -163,12 +173,19 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Need a custom solution?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Need a custom solution?
+              </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Our team of experts is ready to discuss your specific requirements and create a tailored solution that
-                fits your business needs.
+                Our team of experts is ready to discuss your specific
+                requirements and create a tailored solution that fits your
+                business needs.
               </p>
-              <Button size="lg" className="rounded-full px-8" onClick={handleScheduleConsultation}>
+              <Button
+                size="lg"
+                className="rounded-full px-8"
+                onClick={handleScheduleConsultation}
+              >
                 Schedule a Consultation
               </Button>
             </motion.div>
@@ -176,7 +193,11 @@ export default function ServicesPage() {
         </section>
       </main>
 
-      <ServiceInquiryModal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ServiceInquiryModal
+        service={selectedService}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       {/* Service Details Modal */}
       <Dialog open={showServiceModal} onOpenChange={setShowServiceModal}>
@@ -188,7 +209,7 @@ export default function ServicesPage() {
                   {selectedService.name}
                 </DialogTitle>
               </DialogHeader>
-              
+
               <div className="space-y-6">
                 {/* Service Image */}
                 {selectedService.image && (
@@ -204,7 +225,9 @@ export default function ServicesPage() {
                 {/* Category */}
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="text-sm">
-                    {typeof selectedService.category === 'string' ? selectedService.category : selectedService.category?.name || 'Uncategorized'}
+                    {typeof selectedService.category === "string"
+                      ? selectedService.category
+                      : selectedService.category?.name || "Uncategorized"}
                   </Badge>
                 </div>
 
@@ -222,7 +245,11 @@ export default function ServicesPage() {
                     <h3 className="font-semibold mb-3">Service Areas</h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
@@ -236,36 +263,44 @@ export default function ServicesPage() {
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <span className="text-muted-foreground">Expert consultation and strategy development</span>
+                      <span className="text-muted-foreground">
+                        Expert consultation and strategy development
+                      </span>
                     </li>
                     <li className="flex items-start">
                       <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <span className="text-muted-foreground">Customized solution design</span>
+                      <span className="text-muted-foreground">
+                        Customized solution design
+                      </span>
                     </li>
                     <li className="flex items-start">
                       <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <span className="text-muted-foreground">Implementation support and guidance</span>
+                      <span className="text-muted-foreground">
+                        Implementation support and guidance
+                      </span>
                     </li>
                     <li className="flex items-start">
                       <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <span className="text-muted-foreground">Ongoing support and optimization</span>
+                      <span className="text-muted-foreground">
+                        Ongoing support and optimization
+                      </span>
                     </li>
                   </ul>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t">
-                  <Button 
+                  <Button
                     className="flex-1"
                     onClick={() => {
-                      handleInquire(selectedService)
-                      setShowServiceModal(false)
+                      handleInquire(selectedService);
+                      setShowServiceModal(false);
                     }}
                   >
                     Learn More
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowServiceModal(false)}
                   >
                     Close
@@ -279,5 +314,5 @@ export default function ServicesPage() {
 
       <Footer />
     </>
-  )
+  );
 }

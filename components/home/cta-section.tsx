@@ -20,13 +20,18 @@ export function CTASection() {
           className="text-center"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-balance">
-            Ready to transform your business?
+            Need tech support or new equipment?
             <br />
-            Let&apos;s start planning.
+            We&apos;re here to help!
           </h2>
-          <Button asChild size="lg" className="rounded-full px-10">
-            <Link href="/contact">Get in touch</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="rounded-full px-10">
+              <Link href="/contact">Get in touch</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-full px-10">
+              <a href="tel:+919850850331">Call Now: +91-9850850331</a>
+            </Button>
+          </div>
         </motion.div>
       </div>
     </section>

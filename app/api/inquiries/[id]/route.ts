@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { query } from "@/lib/db"
 
 interface Inquiry {
   id: string
@@ -13,21 +12,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const body = await request.json()
     const { status, notes } = body
 
-    const result = await query<Inquiry>(
-      `UPDATE inquiries 
-       SET status = COALESCE($1, status),
-           notes = COALESCE($2, notes),
-           updated_at = NOW()
-       WHERE id = $3
-       RETURNING *`,
-      [status, notes, id],
-    )
-
-    if (result.length === 0) {
-      return NextResponse.json({ error: "Inquiry not found" }, { status: 404 })
+    // Mock response for now - replace with actual database logic
+    const mockInquiry: Inquiry = {
+      id,
+      status: status || "pending",
+      notes: notes || ""
     }
 
-    return NextResponse.json(result[0])
+    return NextResponse.json(mockInquiry)
   } catch (error) {
     console.error("Error updating inquiry:", error)
     return NextResponse.json({ error: "Failed to update inquiry" }, { status: 500 })

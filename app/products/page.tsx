@@ -1,73 +1,84 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { ProductCard } from "@/components/products/product-card"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { getProducts, getCategories } from "@/lib/data"
-import type { Product, Category } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { ProductCard } from "@/components/products/product-card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import { getProducts, getCategories } from "@/lib/data";
+import type { Product, Category } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export default function ProductsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-  const [showProductModal, setShowProductModal] = useState(false)
-  const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
         const [productsData, categoriesData] = await Promise.all([
           getProducts(),
-          getCategories()
-        ])
-        setProducts(productsData)
-        setCategories(categoriesData)
+          getCategories(),
+        ]);
+        setProducts(productsData);
+        setCategories(categoriesData);
       } catch (error) {
-        console.error('Failed to load products:', error)
+        console.error("Failed to load products:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      if (!product.isActive) return false
-      return !selectedCategory || (product.category?.slug === selectedCategory)
-    })
-  }, [products, selectedCategory])
+      if (!product.isActive) return false;
+      return !selectedCategory || product.category?.slug === selectedCategory;
+    });
+  }, [products, selectedCategory]);
 
   const handleViewDetails = (product: Product) => {
-    setSelectedProduct(product)
-    setShowProductModal(true)
-  }
+    setSelectedProduct(product);
+    setShowProductModal(true);
+  };
 
   const handleContactToBuy = (product: Product) => {
     // Navigate to contact page with product pre-selected
-    const contactUrl = `/contact?product=${encodeURIComponent(product.name)}&type=purchase&subject=${encodeURIComponent(`Inquiry about ${product.name}`)}`
-    window.location.href = contactUrl
-  }
+    const contactUrl = `/contact?product=${encodeURIComponent(
+      product.name
+    )}&type=purchase&subject=${encodeURIComponent(
+      `Inquiry about ${product.name}`
+    )}`;
+    window.location.href = contactUrl;
+  };
 
   const handleRequestCustom = () => {
     // Navigate to contact page for custom product request
-    const contactUrl = `/contact?type=custom&subject=${encodeURIComponent('Custom Product Request')}`
-    window.location.href = contactUrl
-  }
+    const contactUrl = `/contact?type=custom&subject=${encodeURIComponent(
+      "Custom Product Request"
+    )}`;
+    window.location.href = contactUrl;
+  };
 
   return (
     <>
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-42 pb-16">
         {/* Hero */}
         <section className="px-4 sm:px-6 lg:px-8 mb-16">
           <div className="mx-auto max-w-7xl">
@@ -81,7 +92,8 @@ export default function ProductsPage() {
                 Our <span className="font-serif italic">Products</span>
               </h1>
               <p className="text-lg text-muted-foreground">
-                Discover our curated selection of high-quality products designed to meet your business needs and drive success.
+                Discover our curated selection of high-quality products designed
+                to meet your business needs and drive success.
               </p>
             </motion.div>
           </div>
@@ -96,7 +108,8 @@ export default function ProductsPage() {
                 size="sm"
                 className={cn(
                   "rounded-full",
-                  !selectedCategory && "bg-foreground text-background hover:bg-foreground/90",
+                  !selectedCategory &&
+                    "bg-foreground text-background hover:bg-foreground/90"
                 )}
                 onClick={() => setSelectedCategory(null)}
               >
@@ -109,7 +122,8 @@ export default function ProductsPage() {
                   size="sm"
                   className={cn(
                     "rounded-full",
-                    selectedCategory === category.slug && "bg-foreground text-background hover:bg-foreground/90",
+                    selectedCategory === category.slug &&
+                      "bg-foreground text-background hover:bg-foreground/90"
                   )}
                   onClick={() => setSelectedCategory(category.slug)}
                 >
@@ -141,8 +155,8 @@ export default function ProductsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <ProductCard 
-                      product={product} 
+                    <ProductCard
+                      product={product}
                       onViewDetails={handleViewDetails}
                       onContactToBuy={handleContactToBuy}
                       showPricing={true}
@@ -163,11 +177,18 @@ export default function ProductsPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Need a custom product?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Need a custom product?
+              </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Our team can work with you to create customized solutions that perfectly match your specific requirements and business goals.
+                Our team can work with you to create customized solutions that
+                perfectly match your specific requirements and business goals.
               </p>
-              <Button size="lg" className="rounded-full px-8" onClick={handleRequestCustom}>
+              <Button
+                size="lg"
+                className="rounded-full px-8"
+                onClick={handleRequestCustom}
+              >
                 Request Custom Product
               </Button>
             </motion.div>
@@ -185,7 +206,7 @@ export default function ProductsPage() {
                   {selectedProduct.name}
                 </DialogTitle>
               </DialogHeader>
-              
+
               <div className="space-y-6">
                 {/* Product Image */}
                 {selectedProduct.image && (
@@ -201,15 +222,21 @@ export default function ProductsPage() {
                 {/* Category and Price */}
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="text-sm">
-                    {typeof selectedProduct.category === 'string' ? selectedProduct.category : selectedProduct.category?.name || 'Uncategorized'}
+                    {typeof selectedProduct.category === "string"
+                      ? selectedProduct.category
+                      : selectedProduct.category?.name || "Uncategorized"}
                   </Badge>
-                  
+
                   {selectedProduct.showPrice && (
                     <div className="text-right">
                       {selectedProduct.discount ? (
                         <div className="space-y-1">
                           <div className="text-2xl font-bold">
-                            ${((selectedProduct.price || 0) * (1 - selectedProduct.discount / 100)).toLocaleString()}
+                            $
+                            {(
+                              (selectedProduct.price || 0) *
+                              (1 - selectedProduct.discount / 100)
+                            ).toLocaleString()}
                           </div>
                           <div className="text-sm text-muted-foreground line-through">
                             ${(selectedProduct.price || 0).toLocaleString()}
@@ -236,47 +263,55 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Specifications */}
-                {selectedProduct.specifications && selectedProduct.specifications.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold mb-3">Specifications</h3>
-                    <ul className="space-y-2">
-                      {selectedProduct.specifications.map((spec, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                          <span className="text-muted-foreground">{spec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {selectedProduct.specifications &&
+                  selectedProduct.specifications.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold mb-3">Specifications</h3>
+                      <ul className="space-y-2">
+                        {selectedProduct.specifications.map((spec, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                            <span className="text-muted-foreground">
+                              {spec}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Features */}
-                {selectedProduct.features && selectedProduct.features.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold mb-3">Key Features</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProduct.features.map((feature, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
+                {selectedProduct.features &&
+                  selectedProduct.features.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold mb-3">Key Features</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProduct.features.map((feature, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t">
-                  <Button 
+                  <Button
                     className="flex-1"
                     onClick={() => {
-                      handleContactToBuy(selectedProduct)
-                      setShowProductModal(false)
+                      handleContactToBuy(selectedProduct);
+                      setShowProductModal(false);
                     }}
                   >
                     {selectedProduct.showPrice ? "Buy Now" : "Contact to Buy"}
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowProductModal(false)}
                   >
                     Close
@@ -290,5 +325,5 @@ export default function ProductsPage() {
 
       <Footer />
     </>
-  )
+  );
 }
