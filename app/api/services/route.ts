@@ -1,56 +1,76 @@
 import { type NextRequest, NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
-import type { Service, ServiceStatus } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   try {
+    // Mock services data for demo
+    const mockServices = [
+      {
+        id: "1",
+        name: "Computer Repair",
+        slug: "computer-repair",
+        description: "Professional computer repair and maintenance services",
+        short_description: "Fast and reliable computer repair",
+        price_range: "₹500 - ₹2000",
+        is_featured: true,
+        is_active: true,
+        status: "PUBLISHED",
+        category: { id: "1", name: "Computer Services", slug: "computer-services" },
+        created_at: new Date().toISOString()
+      },
+      {
+        id: "2",
+        name: "CCTV Installation",
+        slug: "cctv-installation",
+        description: "Complete CCTV camera installation and monitoring setup",
+        short_description: "Professional security camera installation",
+        price_range: "₹15000 - ₹50000",
+        is_featured: true,
+        is_active: true,
+        status: "PUBLISHED",
+        category: { id: "2", name: "Security Services", slug: "security-services" },
+        created_at: new Date().toISOString()
+      },
+      {
+        id: "3",
+        name: "Electrical Services",
+        slug: "electrical-services", 
+        description: "Electrical wiring, installation and maintenance services",
+        short_description: "Complete electrical solutions",
+        price_range: "₹1000 - ₹10000",
+        is_featured: true,
+        is_active: true,
+        status: "PUBLISHED",
+        category: { id: "3", name: "Electrical Services", slug: "electrical-services" },
+        created_at: new Date().toISOString()
+      }
+    ];
+
     const { searchParams } = new URL(request.url)
-    const category = searchParams.get("category")
     const featured = searchParams.get("featured")
     const search = searchParams.get("search")
-    const status = searchParams.get("status") as ServiceStatus
     const page = parseInt(searchParams.get("page") || "1")
     const pageSize = parseInt(searchParams.get("pageSize") || "20")
 
-    const where: any = {
-      isActive: true,
-      status: status || 'PUBLISHED'
-    }
-
-    if (category && category !== "all") {
-      where.category = {
-        slug: category
-      }
-    }
+    let filteredServices = mockServices;
 
     if (featured === "true") {
-      where.isFeatured = true
+      filteredServices = filteredServices.filter(service => service.is_featured);
     }
 
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { shortDescription: { contains: search, mode: 'insensitive' } }
-      ]
+      const searchLower = search.toLowerCase();
+      filteredServices = filteredServices.filter(service => 
+        service.name.toLowerCase().includes(searchLower) ||
+        service.description.toLowerCase().includes(searchLower)
+      );
     }
 
-    const [services, total] = await Promise.all([
-      prisma.service.findMany({
-        where,
-        include: {
-          category: true
-        },
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * pageSize,
-        take: pageSize
-      }),
-      prisma.service.count({ where })
-    ])
+    const total = filteredServices.length;
+    const startIndex = (page - 1) * pageSize;
+    const paginatedServices = filteredServices.slice(startIndex, startIndex + pageSize);
 
     return NextResponse.json({
-      data: services,
+      data: paginatedServices,
       pagination: {
         page,
         limit: pageSize,
@@ -69,21 +89,24 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, slug, description, shortDescription, icon, category, features, priceRange, isFeatured } = body
 
-    const service = await prisma.service.create({
-      data: {
-        name,
-        slug,
-        description,
-        short_description: shortDescription,
-        icon,
-        category_id: category,
-        features,
-        price_range: priceRange,
-        is_featured: isFeatured ?? false,
-      }
-    })
+    // Mock response
+    const mockService = {
+      id: Date.now().toString(),
+      name,
+      slug,
+      description,
+      short_description: shortDescription,
+      icon,
+      category_id: category,
+      features,
+      price_range: priceRange,
+      is_featured: isFeatured ?? false,
+      is_active: true,
+      status: "PUBLISHED",
+      created_at: new Date().toISOString()
+    }
 
-    return NextResponse.json(service, { status: 201 })
+    return NextResponse.json(mockService, { status: 201 })
   } catch (error) {
     console.error("Error creating service:", error)
     return NextResponse.json({ error: "Failed to create service" }, { status: 500 })
