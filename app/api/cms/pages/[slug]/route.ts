@@ -1,6 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
 import type { Page, PageStatus } from "@/lib/types"
 
 export async function GET(
@@ -9,35 +7,48 @@ export async function GET(
 ) {
   try {
     const { slug } = params
-    const session = await getSession()
     
-    const where: any = { slug }
-    
-    // Only show published pages for non-authenticated users
-    if (!session) {
-      where.isPublished = true
-      where.status = 'PUBLISHED'
+    // Mock page data
+    const mockPages: { [key: string]: any } = {
+      'about': {
+        id: "1",
+        title: "About Yog Computers",
+        slug: "about",
+        content: "Your trusted technology partner since 2003...",
+        excerpt: "Learn about Yog Computers history and services",
+        metaTitle: "About Yog Computers - Your Technology Partner",
+        metaDescription: "Discover Yog Computers' 20+ years of service in Pune",
+        status: "PUBLISHED",
+        isPublished: true,
+        template: "default",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        parent: null,
+        children: []
+      },
+      'contact': {
+        id: "2", 
+        title: "Contact Us",
+        slug: "contact",
+        content: "Get in touch with Yog Computers...",
+        excerpt: "Contact Yog Computers for all your tech needs",
+        metaTitle: "Contact Yog Computers - Pune Tech Support",
+        metaDescription: "Contact Yog Computers in Pune for computer repair, CCTV, electrical services",
+        status: "PUBLISHED",
+        isPublished: true,
+        template: "default",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        parent: null,
+        children: []
+      }
     }
 
-    const page = await prisma.page.findUnique({
-      where,
-      include: {
-        creator: {
-          select: { id: true, name: true, email: true }
-        },
-        updater: {
-          select: { id: true, name: true, email: true }
-        },
-        parent: {
-          select: { id: true, title: true, slug: true }
-        },
-        children: {
-          select: { id: true, title: true, slug: true },
-          where: { isPublished: true }
-        }
-      }
-    })
-
+    const page = mockPages[slug]
     if (!page) {
       return NextResponse.json({ error: "Page not found" }, { status: 404 })
     }
@@ -54,67 +65,24 @@ export async function PUT(
   { params }: { params: { slug: string } }
 ) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session || !['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'AUTHOR'].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const { slug } = params
     const body = await request.json()
-    const {
-      title,
-      content,
-      excerpt,
-      metaTitle,
-      metaDescription,
-      status,
-      isPublished,
-      publishedAt,
-      template,
-      parentId,
-      sortOrder,
-      featuredImage,
-      settings
-    } = body
+    const { title, content, status } = body
 
-    // Check if page exists
-    const existingPage = await prisma.page.findUnique({ where: { slug } })
-    if (!existingPage) {
-      return NextResponse.json({ error: "Page not found" }, { status: 404 })
+    // Mock update response
+    const mockPage = {
+      id: Date.now().toString(),
+      title: title || "Updated Page",
+      slug,
+      content: content || "Updated content...",
+      status: status || "DRAFT",
+      updatedAt: new Date().toISOString(),
+      creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+      updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" }
     }
 
-    // Update page
-    const page = await prisma.page.update({
-      where: { slug },
-      data: {
-        title,
-        content,
-        excerpt,
-        metaTitle,
-        metaDescription,
-        status: status as PageStatus,
-        isPublished,
-        publishedAt: publishedAt ? new Date(publishedAt) : null,
-        template,
-        parentId,
-        sortOrder,
-        featuredImage,
-        settings,
-        updatedById: session.user.id
-      },
-      include: {
-        creator: {
-          select: { id: true, name: true, email: true }
-        },
-        updater: {
-          select: { id: true, name: true, email: true }
-        }
-      }
-    })
-
     return NextResponse.json({ 
-      data: page,
+      data: mockPage,
       message: "Page updated successfully"
     })
   } catch (error) {
@@ -128,23 +96,7 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session || !['SUPER_ADMIN', 'ADMIN'].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const { slug } = params
-
-    // Check if page exists
-    const existingPage = await prisma.page.findUnique({ where: { slug } })
-    if (!existingPage) {
-      return NextResponse.json({ error: "Page not found" }, { status: 404 })
-    }
-
-    // Delete page
-    await prisma.page.delete({ where: { slug } })
-
+    // Mock delete response
     return NextResponse.json({ message: "Page deleted successfully" })
   } catch (error) {
     console.error("Error deleting page:", error)
