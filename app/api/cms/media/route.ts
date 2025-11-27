@@ -1,62 +1,49 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
 import type { Media } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication for admin features
-    const session = await getSession()
-    const isAdmin = session && ['SUPER_ADMIN', 'ADMIN', 'EDITOR'].includes(session.user.role)
-
-    const { searchParams } = new URL(request.url)
-    const folder = searchParams.get("folder")
-    const search = searchParams.get("search")
-    const mimeType = searchParams.get("mimeType")
-    const page = parseInt(searchParams.get("page") || "1")
-    const pageSize = parseInt(searchParams.get("pageSize") || "20")
-
-    const where: any = {}
-
-    if (folder) {
-      where.folder = folder
-    }
-
-    if (search) {
-      where.OR = [
-        { filename: { contains: search, mode: 'insensitive' } },
-        { originalName: { contains: search, mode: 'insensitive' } },
-        { alt: { contains: search, mode: 'insensitive' } },
-        { caption: { contains: search, mode: 'insensitive' } }
-      ]
-    }
-
-    if (mimeType) {
-      where.mimeType = { startsWith: mimeType }
-    }
-
-    const [media, total] = await Promise.all([
-      prisma.media.findMany({
-        where,
-        include: isAdmin ? {
-          creator: {
-            select: { id: true, name: true, email: true }
-          }
-        } : undefined,
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * pageSize,
-        take: pageSize
-      }),
-      prisma.media.count({ where })
-    ])
+    // Mock media data for demo
+    const mockMedia = [
+      {
+        id: "1",
+        filename: "logo.jpg",
+        originalName: "yog-computers-logo.jpg",
+        mimeType: "image/jpeg",
+        size: 15680,
+        url: "/logo.jpeg",
+        alt: "Yog Computers Logo",
+        caption: "Company logo",
+        folder: "logos",
+        width: 200,
+        height: 200,
+        createdAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" }
+      },
+      {
+        id: "2",
+        filename: "hero-bg.jpg",
+        originalName: "hero-background.jpg", 
+        mimeType: "image/jpeg",
+        size: 245760,
+        url: "/abstract-holographic-crystal-texture-with-iridesce.jpg",
+        alt: "Hero background",
+        caption: "Website hero background",
+        folder: "backgrounds",
+        width: 1920,
+        height: 1080,
+        createdAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" }
+      }
+    ]
 
     return NextResponse.json({
-      data: media,
+      data: mockMedia,
       pagination: {
-        page,
-        limit: pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
+        page: 1,
+        limit: 20,
+        total: 2,
+        totalPages: 1
       }
     })
   } catch (error) {
@@ -67,54 +54,30 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session || !['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'AUTHOR'].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const body = await request.json()
-    const {
-      filename,
-      originalName,
-      mimeType,
-      size,
-      url,
-      alt,
-      caption,
-      description,
-      folder,
-      tags = [],
-      width,
-      height,
-      metadata
-    } = body
+    const { filename, url, mimeType, alt } = body
 
-    // Validate required fields
     if (!filename || !url || !mimeType) {
       return NextResponse.json({ error: "Filename, URL, and MIME type are required" }, { status: 400 })
     }
 
-    const media = await prisma.media.create({
-      data: {
-        filename,
-        originalName: originalName || filename,
-        mimeType,
-        size: size || 0,
-        url,
-        alt,
-        caption,
-        description,
-        folder,
-        tags,
-        width,
-        height,
-        metadata,
-        createdById: session.user.id
-      }
-    })
+    // Mock response
+    const mockMedia = {
+      id: Date.now().toString(),
+      filename,
+      originalName: filename,
+      mimeType,
+      size: 12000,
+      url,
+      alt: alt || "",
+      caption: "",
+      folder: "uploads",
+      width: null,
+      height: null,
+      createdAt: new Date().toISOString()
+    }
 
-    return NextResponse.json({ data: media }, { status: 201 })
+    return NextResponse.json({ data: mockMedia }, { status: 201 })
   } catch (error) {
     console.error("Error creating media:", error)
     return NextResponse.json({ error: "Failed to upload media" }, { status: 500 })
