@@ -1,74 +1,76 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
 import type { Page, PageStatus } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get("status") as PageStatus
-    const published = searchParams.get("published")
-    const search = searchParams.get("search")
-    const page = parseInt(searchParams.get("page") || "1")
-    const pageSize = parseInt(searchParams.get("pageSize") || "20")
-
-    const where: any = {}
-
-    // Only show published pages for non-authenticated users
-    const session = await getSession()
-    if (!session) {
-      where.isPublished = true
-      where.status = 'PUBLISHED'
-    } else if (status) {
-      where.status = status
-    }
-
-    if (published === "true") {
-      where.isPublished = true
-    }
-
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { slug: { contains: search, mode: 'insensitive' } },
-        { excerpt: { contains: search, mode: 'insensitive' } }
-      ]
-    }
-
-    const [pages, total] = await Promise.all([
-      prisma.page.findMany({
-        where,
-        include: {
-          creator: {
-            select: { id: true, name: true, email: true }
-          },
-          updater: {
-            select: { id: true, name: true, email: true }
-          },
-          parent: {
-            select: { id: true, title: true, slug: true }
-          },
-          children: {
-            select: { id: true, title: true, slug: true }
-          }
-        },
-        orderBy: [
-          { sortOrder: 'asc' },
-          { createdAt: 'desc' }
-        ],
-        skip: (page - 1) * pageSize,
-        take: pageSize
-      }),
-      prisma.page.count({ where })
-    ])
+    // Mock pages data
+    const mockPages = [
+      {
+        id: "1",
+        title: "About Yog Computers",
+        slug: "about",
+        content: "Your trusted technology partner since 2003...",
+        excerpt: "Learn about Yog Computers history and services",
+        metaTitle: "About Yog Computers - Your Technology Partner",
+        metaDescription: "Discover Yog Computers' 20+ years of service in Pune",
+        status: "PUBLISHED",
+        isPublished: true,
+        template: "default",
+        sortOrder: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        parent: null,
+        children: []
+      },
+      {
+        id: "2",
+        title: "Contact Us",
+        slug: "contact",
+        content: "Get in touch with Yog Computers...",
+        excerpt: "Contact Yog Computers for all your tech needs",
+        metaTitle: "Contact Yog Computers - Pune Tech Support",
+        metaDescription: "Contact Yog Computers in Pune for computer repair, CCTV, electrical services",
+        status: "PUBLISHED",
+        isPublished: true,
+        template: "default",
+        sortOrder: 2,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        parent: null,
+        children: []
+      },
+      {
+        id: "3",
+        title: "Services",
+        slug: "services",
+        content: "Our comprehensive technology services...",
+        excerpt: "Computer repair, CCTV installation, electrical services",
+        metaTitle: "Yog Computers Services - Computer Repair & CCTV Pune",
+        metaDescription: "Professional computer repair, CCTV installation, and electrical services in Pune",
+        status: "PUBLISHED",
+        isPublished: true,
+        template: "default",
+        sortOrder: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        updater: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+        parent: null,
+        children: []
+      }
+    ]
 
     return NextResponse.json({
-      data: pages,
+      data: mockPages,
       pagination: {
-        page,
-        limit: pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
+        page: 1,
+        limit: 20,
+        total: 3,
+        totalPages: 1
       }
     })
   } catch (error) {
@@ -79,71 +81,33 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session || !['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'AUTHOR'].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const body = await request.json()
-    const {
-      title,
-      slug,
-      content,
-      excerpt,
-      metaTitle,
-      metaDescription,
-      status = 'DRAFT',
-      isPublished = false,
-      publishedAt,
-      template,
-      parentId,
-      sortOrder = 0,
-      featuredImage,
-      settings
-    } = body
+    const { title, slug, content, status = 'DRAFT' } = body
 
-    // Validate required fields
     if (!title || !slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 })
     }
 
-    // Check if slug already exists
-    const existingPage = await prisma.page.findUnique({ where: { slug } })
-    if (existingPage) {
-      return NextResponse.json({ error: "Page with this slug already exists" }, { status: 400 })
+    // Mock response
+    const mockPage = {
+      id: Date.now().toString(),
+      title,
+      slug,
+      content: content || "",
+      excerpt: "",
+      metaTitle: title,
+      metaDescription: "",
+      status,
+      isPublished: status === 'PUBLISHED',
+      template: "default",
+      sortOrder: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      creator: { id: "1", name: "Admin", email: "admin@yogcomputers.com" },
+      parent: null
     }
 
-    const page = await prisma.page.create({
-      data: {
-        title,
-        slug,
-        content,
-        excerpt,
-        metaTitle,
-        metaDescription,
-        status: status as PageStatus,
-        isPublished,
-        publishedAt: publishedAt ? new Date(publishedAt) : null,
-        template,
-        parentId,
-        sortOrder,
-        featuredImage,
-        settings,
-        createdById: session.user.id,
-        updatedById: session.user.id
-      },
-      include: {
-        creator: {
-          select: { id: true, name: true, email: true }
-        },
-        parent: {
-          select: { id: true, title: true, slug: true }
-        }
-      }
-    })
-
-    return NextResponse.json({ data: page }, { status: 201 })
+    return NextResponse.json({ data: mockPage }, { status: 201 })
   } catch (error) {
     console.error("Error creating page:", error)
     return NextResponse.json({ error: "Failed to create page" }, { status: 500 })
