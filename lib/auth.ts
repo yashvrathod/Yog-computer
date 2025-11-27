@@ -1,5 +1,5 @@
 import { cookies } from "next/headers"
-import { prisma } from "@/lib/prisma"
+import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { User as PrismaUser, Session as PrismaSession } from "@prisma/client"
 

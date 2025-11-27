@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import prisma from "@/lib/prisma"
 import { getSession, hashPassword } from "@/lib/auth"
 import type { User, Role } from "@/lib/types"
 

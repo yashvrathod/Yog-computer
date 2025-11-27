@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth"
 import type { Service, ServiceStatus } from "@/lib/types"
 
@@ -69,14 +69,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, slug, description, shortDescription, icon, category, features, priceRange, isFeatured } = body
 
-    const result = await query<Service>(
-      `INSERT INTO services (name, slug, description, short_description, icon, category, features, price_range, is_featured)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING *`,
-      [name, slug, description, shortDescription, icon, category, features, priceRange, isFeatured ?? false],
-    )
+    const service = await prisma.service.create({
+      data: {
+        name,
+        slug,
+        description,
+        short_description: shortDescription,
+        icon,
+        category_id: category,
+        features,
+        price_range: priceRange,
+        is_featured: isFeatured ?? false,
+      }
+    })
 
-    return NextResponse.json(result[0], { status: 201 })
+    return NextResponse.json(service, { status: 201 })
   } catch (error) {
     console.error("Error creating service:", error)
     return NextResponse.json({ error: "Failed to create service" }, { status: 500 })

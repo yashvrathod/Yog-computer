@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth"
-import type { Testimonial } from "@/lib/types"
 import type { Testimonial } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
@@ -9,15 +8,21 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const featured = searchParams.get("featured")
 
-    let queryText = "SELECT * FROM testimonials WHERE is_active = true"
-
-    if (featured === "true") {
-      queryText += " AND is_featured = true"
+    const where: any = {
+      is_active: true
     }
 
-    queryText += " ORDER BY created_at DESC"
+    if (featured === "true") {
+      where.is_featured = true
+    }
 
-    const testimonials = await query<Testimonial>(queryText)
+    const testimonials = await prisma.testimonial.findMany({
+      where,
+      orderBy: {
+        created_at: 'desc'
+      }
+    })
+
     return NextResponse.json(testimonials)
   } catch (error) {
     console.error("Error fetching testimonials:", error)
