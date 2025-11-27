@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
 import type { DashboardStats } from "@/lib/types"
 
 export async function GET() {

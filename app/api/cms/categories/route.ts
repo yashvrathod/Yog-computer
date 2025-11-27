@@ -1,69 +1,40 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getSession } from "@/lib/auth"
-import type { Category } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const search = searchParams.get("search")
-    const parentId = searchParams.get("parentId")
-    const page = parseInt(searchParams.get("page") || "1")
-    const pageSize = parseInt(searchParams.get("pageSize") || "50")
-
-    const where: any = {
-      isActive: true
-    }
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
-      ]
-    }
-
-    if (parentId === "null") {
-      where.parentId = null
-    } else if (parentId) {
-      where.parentId = parentId
-    }
-
-    const [categories, total] = await Promise.all([
-      prisma.category.findMany({
-        where,
-        include: {
-          parent: {
-            select: { id: true, name: true, slug: true }
-          },
-          children: {
-            select: { id: true, name: true, slug: true },
-            where: { isActive: true }
-          },
-          _count: {
-            select: {
-              products: true,
-              services: true,
-              posts: true
-            }
-          }
-        },
-        orderBy: [
-          { sortOrder: 'asc' },
-          { name: 'asc' }
-        ],
-        skip: (page - 1) * pageSize,
-        take: pageSize
-      }),
-      prisma.category.count({ where })
-    ])
+    // Mock categories for demo
+    const mockCategories = [
+      {
+        id: "1",
+        name: "Computer Products",
+        slug: "computer-products",
+        description: "Laptops, desktops, and accessories",
+        isActive: true,
+        sortOrder: 1,
+        parent: null,
+        children: [],
+        _count: { products: 5, services: 0, posts: 0 }
+      },
+      {
+        id: "2", 
+        name: "Security Systems",
+        slug: "security-systems", 
+        description: "CCTV and surveillance equipment",
+        isActive: true,
+        sortOrder: 2,
+        parent: null,
+        children: [],
+        _count: { products: 3, services: 2, posts: 0 }
+      }
+    ]
 
     return NextResponse.json({
-      data: categories,
+      data: mockCategories,
       pagination: {
-        page,
-        limit: pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
+        page: 1,
+        limit: 50,
+        total: 2,
+        totalPages: 1
       }
     })
   } catch (error) {
@@ -74,53 +45,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session || !['SUPER_ADMIN', 'ADMIN', 'EDITOR'].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const body = await request.json()
-    const {
-      name,
-      slug,
-      description,
-      image,
-      parentId,
-      sortOrder = 0
-    } = body
+    const { name, slug, description } = body
 
-    // Validate required fields
     if (!name || !slug) {
       return NextResponse.json({ error: "Name and slug are required" }, { status: 400 })
     }
 
-    // Check if slug already exists
-    const existingCategory = await prisma.category.findUnique({ where: { slug } })
-    if (existingCategory) {
-      return NextResponse.json({ error: "Category with this slug already exists" }, { status: 400 })
+    // Mock response
+    const mockCategory = {
+      id: Date.now().toString(),
+      name,
+      slug,
+      description: description || "",
+      isActive: true,
+      sortOrder: 0,
+      parent: null,
+      children: []
     }
 
-    const category = await prisma.category.create({
-      data: {
-        name,
-        slug,
-        description,
-        image,
-        parentId,
-        sortOrder
-      },
-      include: {
-        parent: {
-          select: { id: true, name: true, slug: true }
-        },
-        children: {
-          select: { id: true, name: true, slug: true }
-        }
-      }
-    })
-
-    return NextResponse.json({ data: category }, { status: 201 })
+    return NextResponse.json({ data: mockCategory }, { status: 201 })
   } catch (error) {
     console.error("Error creating category:", error)
     return NextResponse.json({ error: "Failed to create category" }, { status: 500 })
