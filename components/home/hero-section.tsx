@@ -2,22 +2,27 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-blue-gradient-soft">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           src="/abstract-holographic-crystal-texture-with-iridesce.jpg"
           alt="Hero background"
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
         />
 
-        {/* Soft gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/40 to-background/95 backdrop-blur-[2px]" />
+        {/* Enhanced blue gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-primary/10 to-background/95 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-blue-radial opacity-20" />
       </div>
 
       {/* Content */}
@@ -54,6 +59,34 @@ export function HeroSection() {
           businesses grow faster. From strategy to execution, we combine
           creativity, technology, and excellence.
         </motion.p>
+
+        {/* Key Metrics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.65 }}
+          className="flex flex-wrap items-center justify-center gap-8 mt-12 mb-8"
+        >
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl font-bold">500+</div>
+            <div className="text-sm text-muted-foreground">Active Clients</div>
+          </div>
+          <div className="hidden sm:block w-px h-12 bg-border"></div>
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl font-bold">98.5%</div>
+            <div className="text-sm text-muted-foreground">Success Rate</div>
+          </div>
+          <div className="hidden sm:block w-px h-12 bg-border"></div>
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl font-bold">20+</div>
+            <div className="text-sm text-muted-foreground">Years Experience</div>
+          </div>
+          <div className="hidden sm:block w-px h-12 bg-border"></div>
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl font-bold">25</div>
+            <div className="text-sm text-muted-foreground">Industry Awards</div>
+          </div>
+        </motion.div>
 
         {/* CTA Buttons */}
         <motion.div

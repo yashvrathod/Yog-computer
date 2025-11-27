@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { getFeaturedClients } from "@/lib/data";
 import type { Client } from "@/lib/types";
 
@@ -98,10 +99,13 @@ export function ClientsSection() {
                     key={`${client.companyName}-${index}`}
                     className="mx-12 flex-shrink-0 transition-all grayscale hover:grayscale-0 opacity-60 hover:opacity-100 hover:scale-[1.05] duration-300"
                   >
-                    <img
+                    <Image
                       src={client.logo || "/placeholder.svg"}
                       alt={client.companyName}
+                      width={120}
+                      height={48}
                       className="h-12 w-auto object-contain"
+                      sizes="120px"
                     />
                   </div>
                 ))}

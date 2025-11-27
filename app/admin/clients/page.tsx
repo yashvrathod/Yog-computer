@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -145,10 +146,13 @@ export default function AdminClientsPage() {
               {filteredClients.map((client) => (
                 <TableRow key={client.id}>
                   <TableCell>
-                    <img
+                    <Image
                       src={client.logo || "/placeholder.svg"}
                       alt={client.name}
+                      width={48}
+                      height={32}
                       className="w-12 h-8 object-contain"
+                      sizes="48px"
                     />
                   </TableCell>
                   <TableCell className="font-medium">{client.name}</TableCell>

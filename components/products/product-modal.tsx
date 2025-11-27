@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import type { Product } from "@/lib/types"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -29,7 +30,7 @@ export function ProductModal({ product, isOpen, onClose, showPricing = true }: P
         <div className="grid md:grid-cols-2 gap-6 mt-4">
           {/* Image */}
           <div className="relative aspect-square rounded-xl overflow-hidden bg-secondary/30">
-            <img src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
+            <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
             {product.discount && (
               <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">{product.discount}% OFF</Badge>
             )}

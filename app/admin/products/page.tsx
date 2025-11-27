@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -315,10 +316,13 @@ export default function AdminProductsPage() {
                 filteredProducts.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
-                      <img
+                      <Image
                         src={product.featuredImage || "/placeholder.svg"}
                         alt={product.name}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-lg object-cover"
+                        sizes="48px"
                       />
                     </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>

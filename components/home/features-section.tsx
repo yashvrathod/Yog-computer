@@ -34,7 +34,7 @@ export function FeaturesSection() {
   return (
     <section
       ref={ref}
-      className="py-28 px-6 sm:px-10 lg:px-20 bg-gradient-to-b from-background to-muted/20"
+      className="py-28 px-6 sm:px-10 lg:px-20 bg-gradient-to-b from-background via-primary/[0.015] to-muted/20"
     >
       <div className="mx-auto max-w-7xl text-center mb-16">
         <motion.h2

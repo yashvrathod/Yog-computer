@@ -7,6 +7,8 @@ import { Footer } from "@/components/layout/footer"
 import { ServiceCard } from "@/components/services/service-card"
 import { ServiceInquiryModal } from "@/components/services/service-inquiry-modal"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
 import { getServices, getCategories } from "@/lib/data"
 import type { Service, Category } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -15,6 +17,7 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showServiceModal, setShowServiceModal] = useState(false)
   const [services, setServices] = useState<Service[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,6 +51,17 @@ export default function ServicesPage() {
   const handleInquire = (service: Service) => {
     setSelectedService(service)
     setIsModalOpen(true)
+  }
+
+  const handleViewDetails = (service: Service) => {
+    setSelectedService(service)
+    setShowServiceModal(true)
+  }
+
+  const handleScheduleConsultation = () => {
+    // Navigate to contact page for consultation booking
+    const contactUrl = `/contact?type=consultation&subject=${encodeURIComponent('Schedule a Consultation')}`
+    window.location.href = contactUrl
   }
 
   return (
@@ -128,7 +142,11 @@ export default function ServicesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <ServiceCard service={service} onInquire={handleInquire} />
+                    <ServiceCard 
+                      service={service} 
+                      onInquire={handleInquire}
+                      onViewDetails={handleViewDetails}
+                    />
                   </motion.div>
                 ))}
               </motion.div>
@@ -150,7 +168,7 @@ export default function ServicesPage() {
                 Our team of experts is ready to discuss your specific requirements and create a tailored solution that
                 fits your business needs.
               </p>
-              <Button size="lg" className="rounded-full px-8">
+              <Button size="lg" className="rounded-full px-8" onClick={handleScheduleConsultation}>
                 Schedule a Consultation
               </Button>
             </motion.div>
@@ -159,6 +177,105 @@ export default function ServicesPage() {
       </main>
 
       <ServiceInquiryModal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      {/* Service Details Modal */}
+      <Dialog open={showServiceModal} onOpenChange={setShowServiceModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedService && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold pr-8">
+                  {selectedService.name}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Service Image */}
+                {selectedService.image && (
+                  <div className="aspect-video relative rounded-lg overflow-hidden bg-secondary/30">
+                    <img
+                      src={selectedService.image}
+                      alt={selectedService.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+
+                {/* Category */}
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="text-sm">
+                    {typeof selectedService.category === 'string' ? selectedService.category : selectedService.category?.name || 'Uncategorized'}
+                  </Badge>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h3 className="font-semibold mb-3">Service Description</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {selectedService.description}
+                  </p>
+                </div>
+
+                {/* Tags */}
+                {selectedService.tags && selectedService.tags.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Service Areas</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedService.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Service Benefits */}
+                <div>
+                  <h3 className="font-semibold mb-3">What You Get</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <span className="text-muted-foreground">Expert consultation and strategy development</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <span className="text-muted-foreground">Customized solution design</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <span className="text-muted-foreground">Implementation support and guidance</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <span className="text-muted-foreground">Ongoing support and optimization</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button 
+                    className="flex-1"
+                    onClick={() => {
+                      handleInquire(selectedService)
+                      setShowServiceModal(false)
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowServiceModal(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </>

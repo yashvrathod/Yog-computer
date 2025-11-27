@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -309,9 +310,12 @@ export default function AdminServicesPage() {
                 filteredServices.map((service) => (
                   <TableRow key={service.id}>
                     <TableCell>
-                      <img
+                      <Image
                         src={service.featuredImage || "/placeholder.svg"}
                         alt={service.name}
+                        width={48}
+                        height={48}
+                        sizes="48px"
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                     </TableCell>

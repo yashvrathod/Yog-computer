@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import type { Product } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,20 +11,23 @@ import { Eye, ShoppingCart, MessageCircle } from "lucide-react"
 interface ProductCardProps {
   product: Product
   onViewDetails: (product: Product) => void
+  onContactToBuy?: (product: Product) => void
   showPricing?: boolean
 }
 
-export function ProductCard({ product, onViewDetails, showPricing = true }: ProductCardProps) {
+export function ProductCard({ product, onViewDetails, onContactToBuy, showPricing = true }: ProductCardProps) {
   const discountedPrice = product.discount ? product.price * (1 - product.discount / 100) : product.price
 
   return (
     <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
       <Card className="group overflow-hidden border-border/50 hover:shadow-xl transition-all duration-300 h-full">
         <div className="relative aspect-square overflow-hidden bg-secondary/30">
-          <img
+          <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {product.discount && (
             <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">{product.discount}% OFF</Badge>
@@ -61,12 +65,21 @@ export function ProductCard({ product, onViewDetails, showPricing = true }: Prod
 
           <div className="flex gap-2">
             {showPricing && product.showPrice ? (
-              <Button className="flex-1 rounded-full" size="sm">
+              <Button 
+                className="flex-1 rounded-full" 
+                size="sm"
+                onClick={() => onContactToBuy?.(product)}
+              >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Buy Now
               </Button>
             ) : (
-              <Button className="flex-1 rounded-full bg-transparent" size="sm" variant="outline">
+              <Button 
+                className="flex-1 rounded-full bg-transparent" 
+                size="sm" 
+                variant="outline"
+                onClick={() => onContactToBuy?.(product)}
+              >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contact to Buy
               </Button>

@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, User } from "lucide-react"
 import type { Page } from "@/lib/types"
@@ -132,10 +133,12 @@ export function CMSPageRenderer({ page }: CMSPageRendererProps) {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         {page.featuredImage && (
           <div className="absolute inset-0 z-0">
-            <img 
+            <Image 
               src={page.featuredImage} 
               alt={page.title}
-              className="w-full h-full object-cover opacity-20"
+              fill
+              className="object-cover opacity-20"
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
           </div>

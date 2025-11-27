@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -31,10 +32,12 @@ export function ShowcaseSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative aspect-[4/5] rounded-2xl overflow-hidden group"
           >
-            <img
+            <Image
               src="/modern-professional-business-person-working-in-sle.jpg"
               alt="Professional at work"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8">
@@ -52,10 +55,12 @@ export function ShowcaseSection() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="relative aspect-[4/5] rounded-2xl overflow-hidden group"
           >
-            <img
+            <Image
               src="/modern-professional-team-meeting-in-contemporary-g.jpg"
               alt="Team collaboration"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8">

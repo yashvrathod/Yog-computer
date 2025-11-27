@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
@@ -262,13 +263,12 @@ export default function GalleryPage() {
                       className="relative group cursor-pointer overflow-hidden rounded-xl"
                       onClick={() => openLightbox(image)}
                     >
-                      <img
+                      <Image
                         src={image.url || "/placeholder.svg"}
                         alt={image.alt || image.filename}
-                        className={cn(
-                          "w-full object-cover transition-transform duration-500 group-hover:scale-105",
-                          index % 3 === 0 ? "aspect-[3/4]" : index % 3 === 1 ? "aspect-square" : "aspect-[4/3]",
-                        )}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-300" />
                       <div className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -324,10 +324,13 @@ export default function GalleryPage() {
 
             {selectedImage && (
               <div className="relative">
-                <img
+                <Image
                   src={selectedImage.url || "/placeholder.svg"}
                   alt={selectedImage.title}
+                  width={800}
+                  height={600}
                   className="w-full max-h-[80vh] object-contain rounded-xl"
+                  sizes="(max-width: 768px) 100vw, 800px"
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-foreground/80 to-transparent rounded-b-xl">
                   <h3 className="text-background font-semibold text-xl">{selectedImage.title}</h3>
